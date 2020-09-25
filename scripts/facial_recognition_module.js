@@ -6,9 +6,9 @@ const {ipcRenderer} = require('electron')
 
 
 //set counters for facial recognition
-var unknown_counter = 0;
+var unknown_counter = 1;
 var known_name;
-var known_counter = 0;
+var known_counter = 1;
 
 //function to start facial recognition
 
