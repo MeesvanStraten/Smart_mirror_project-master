@@ -1,0 +1,2740 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Reisinformatie API",
+    "description": "Reisinformatie API",
+    "contact": {
+      "name": "M-Lab"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://ns-api.nl/reisinfo",
+      "description": "API gateway",
+      "variables": {}
+    }
+  ],
+  "security": [
+    {
+      "API key": []
+    }
+  ],
+  "paths": {
+    "/api/v2/disruptions": {
+      "get": {
+        "tags": [
+          "Disruptions"
+        ],
+        "description": "List of disruptions/maintenance.",
+        "operationId": "getDisruptions",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Type of the disruptions. If not present both will be returned.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "storing",
+                "werkzaamheid"
+              ]
+            }
+          },
+          {
+            "name": "actual",
+            "in": "query",
+            "description": "Whether to only return disruptions within 2 hours of the request.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "The language in which to return the disruption messages, note that not all messages are translated.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "nl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "A list of disruptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Verstoring"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/disruptions/{id}": {
+      "get": {
+        "tags": [
+          "Disruptions"
+        ],
+        "description": "Specific disruption/maintenance",
+        "operationId": "getDisruption",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the disruptions",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "The disruption",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Verstoring"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/disruptions/station/{code}": {
+      "get": {
+        "tags": [
+          "Disruptions"
+        ],
+        "description": "Disruptions for a station, code is either a UIC code or old-skool station code",
+        "operationId": "getStationDisruption",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "The UICCode or the station code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "The disruption",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Verstoring"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/price": {
+      "get": {
+        "tags": [
+          "Price"
+        ],
+        "description": "Get the price for a specified trip, either by using ctxRecon or fromStation, toStation and plannedFromTime",
+        "operationId": "getPrice",
+        "parameters": [
+          {
+            "name": "ctxRecon",
+            "in": "query",
+            "description": "reconstruction context to use as basis for finding trip, use either this or fromStation, toStation and plannedFromTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromStation",
+            "in": "query",
+            "description": "departure station code, e.g. UT, ASD",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toStation",
+            "in": "query",
+            "description": "arrival station code, e.g. UT, ASD",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "plannedFromTime",
+            "in": "query",
+            "description": "departure date time in ISO8601",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "plannedArrivalTime",
+            "in": "query",
+            "description": "arrival date time in ISO8601",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "travelClass",
+            "in": "query",
+            "description": "The class to travel.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1",
+                "2"
+              ],
+              "default": "2"
+            }
+          },
+          {
+            "name": "travelType",
+            "in": "query",
+            "description": "The type, single or return for a trip",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "single",
+                "return"
+              ],
+              "default": "single"
+            }
+          },
+          {
+            "name": "adults",
+            "in": "query",
+            "description": "Number of adults to take into account.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "children",
+            "in": "query",
+            "description": "Number of children to take into account.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "The price of the journey.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Price"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/stations": {
+      "get": {
+        "tags": [
+          "Stations"
+        ],
+        "description": "List of stations",
+        "operationId": "getAllStations",
+        "responses": {
+          "default": {
+            "description": "List of stations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StationRepresentation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/arrivals": {
+      "get": {
+        "tags": [
+          "Arrivals"
+        ],
+        "description": "Arrival times for a specified station. Either the UIC code or station is required",
+        "operationId": "getArrivals",
+        "parameters": [
+          {
+            "name": "dateTime",
+            "in": "query",
+            "description": "return departures or arrivals starting at a given dateTime in ISO8601",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "maxJourneys",
+            "in": "query",
+            "description": "number of departures or arrivals to return",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "language to use for translatable messages. Note that not all messages are translated.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "nl",
+                "en"
+              ],
+              "default": "nl"
+            }
+          },
+          {
+            "name": "station",
+            "in": "query",
+            "description": "specify a station by NS abbreviation/code (e.g. ASD or UT)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uicCode",
+            "in": "query",
+            "description": "specify a station by UIC code (84xxxxx)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "forces to use a certain source",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "List of arrival times",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArrivalBoard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/departures": {
+      "get": {
+        "tags": [
+          "Departures"
+        ],
+        "description": "Departure times for a specified station. Either the UIC code or station is required.",
+        "operationId": "getDepartures",
+        "parameters": [
+          {
+            "name": "dateTime",
+            "in": "query",
+            "description": "return departures or arrivals starting at a given dateTime in ISO8601",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "maxJourneys",
+            "in": "query",
+            "description": "number of departures or arrivals to return",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "language to use for translatable messages. Note that not all messages are translated.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "nl",
+                "en"
+              ],
+              "default": "nl"
+            }
+          },
+          {
+            "name": "station",
+            "in": "query",
+            "description": "specify a station by NS abbreviation/code (e.g. ASD or UT)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uicCode",
+            "in": "query",
+            "description": "specify a station by UIC code (84xxxxx)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "forces to use a certain source",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "List of departure times",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartureBoard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/departures/big": {
+      "get": {
+        "tags": [
+          "Departures"
+        ],
+        "description": "Returns a large list of departure times for a specified station. Either the UICCode or station is required. Note: This request returns a large amount of data, if not necessary use the non big request..",
+        "operationId": "getBigDepartures",
+        "parameters": [
+          {
+            "name": "dateTime",
+            "in": "query",
+            "description": "return departures or arrivals starting at a given dateTime in ISO8601",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "maxJourneys",
+            "in": "query",
+            "description": "number of departures or arrivals to return",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "language to use for translatable messages. Note that not all messages are translated.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "nl",
+                "en"
+              ],
+              "default": "nl"
+            }
+          },
+          {
+            "name": "station",
+            "in": "query",
+            "description": "specify a station by NS abbreviation/code (e.g. ASD or UT)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uicCode",
+            "in": "query",
+            "description": "specify a station by UIC code (84xxxxx)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "forces to use a certain source",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "A large list of arrival times",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartureBoard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/trips": {
+      "get": {
+        "tags": [
+          "Trips"
+        ],
+        "description": "Searches for a travel advice with the specified options between the possible backends (HARP, 9292 or PAS/AVG). Defaults to legacy XML implementation, specify header in order to get JSON",
+        "operationId": "getTrips",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Content type to return",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "application/json",
+                "text/xml"
+              ]
+            }
+          },
+          {
+            "name": "originLat",
+            "in": "query",
+            "description": "Latitude of station/stop coordinate of the trip’s origin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "originLng",
+            "in": "query",
+            "description": "Longitude of station/stop coordinate of the trip’s origin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationLat",
+            "in": "query",
+            "description": "Latitude of station/stop coordinate of the trip’s destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationLng",
+            "in": "query",
+            "description": "Longitude of station/stop coordinate of the trip’s destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "viaLat",
+            "in": "query",
+            "description": "Latitude of station/stop coordinate of the trip’s via point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "viaLng",
+            "in": "query",
+            "description": "Longitude of station/stop coordinate of the trip’s via point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "viaWaitTime",
+            "in": "query",
+            "description": "Waiting time at the via location, exclusive of transfer time",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateTime",
+            "in": "query",
+            "description": "Departure date / time for the search. defaults to server time (Europe/Amsterdam)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "searchForArrival",
+            "in": "query",
+            "description": "If set, the date and time parameters specify the arrival time for the trip search instead of the departure time",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "previousAdvices",
+            "in": "query",
+            "description": "Minimum number of advices before the search time",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "nextAdvices",
+            "in": "query",
+            "description": "Minimum number of trips after the search time",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "context",
+            "in": "query",
+            "description": "Defines the starting point for the scroll back or forth operation. Use the scrB value from a previous result to scroll backwards in time and use the scrF value to scroll forward",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "addChangeTime",
+            "in": "query",
+            "description": "Extra time required at all transfers to change trains",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "Language to return information for (only a small subset of text is translated, mainly notes)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "polylines",
+            "in": "query",
+            "description": "Language to return information for (only a small subset of text is translated, mainly notes)",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "fromZip",
+            "in": "query",
+            "description": "(legacy parameter, not supported for JSON) zip code for origin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toZip",
+            "in": "query",
+            "description": "(legacy parameter, not supported for JSON) zip code for destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "travelMethodFrom",
+            "in": "query",
+            "description": "(legacy parameter, not supported for JSON) travel method for origin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "travelMethodTo",
+            "in": "query",
+            "description": "(legacy parameter, not supported for JSON) travel method for destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "description": "Name/constant of product customer will use in travel, if omitted defaults to ROS",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "OVCHIPKAART_ENKELE_REIS",
+                "OVCHIPKAART_RETOUR",
+                "TRAJECT_VRIJ_MAAND",
+                "TRAJECT_VRIJ_JAAR",
+                "BUSINESS_CARD_TRAJECT_VRIJ_JAAR",
+                "DAL_VOORDEEL",
+                "ALTIJD_VOORDEEL",
+                "DAL_VRIJ",
+                "WEEKEND_VRIJ",
+                "ALTIJD_VRIJ",
+                "BUSINESSCARD",
+                "BUSINESSCARD_DAL",
+                "STUDENT_WEEK",
+                "STUDENT_WEEKEND",
+                "VDU",
+                "SAMENREISKORTING",
+                "TRAJECT_VRIJ",
+                "RAILRUNNER",
+                "ETICKET_ENKELE_REIS",
+                "ETICKET_RETOUR",
+                "NSI"
+              ]
+            }
+          },
+          {
+            "name": "travelClass",
+            "in": "query",
+            "description": "class of travel to use when calculating product prices",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FIRST_CLASS",
+                "SECOND_CLASS"
+              ],
+              "default": "2"
+            }
+          },
+          {
+            "name": "discount",
+            "in": "query",
+            "description": "discount of travel to use when calculating product prices",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NO_CHARGE",
+                "DISCOUNT_40_PERCENT",
+                "DISCOUNT_20_PERCENT",
+                "FIP_DISCOUNT",
+                "NO_DISCOUNT"
+              ]
+            }
+          },
+          {
+            "name": "productStationFrom",
+            "in": "query",
+            "description": "Station from which a travel product has been purchased (intended for TrajectVrij)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "productStationTo",
+            "in": "query",
+            "description": "Station to which a travel product has been purchased (intended for TrajectVrij)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "yearCard",
+            "in": "query",
+            "description": "Show options which are only allowed with a year card",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "originTransit",
+            "in": "query",
+            "description": "Return trip advices with transit options to start travel from origin",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "originWalk",
+            "in": "query",
+            "description": "Return trip advices with walking options to start travel from origin to a train station (first mile)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "originBike",
+            "in": "query",
+            "description": "Return trip advices with biking options to start travel from origin to a train station (first mile)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "originCar",
+            "in": "query",
+            "description": "Return trip advices with car options to start travel from origin to a train station (first mile)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "originName",
+            "in": "query",
+            "description": "A name that is returned as the origin in a trip",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "travelAssistanceTransferTime",
+            "in": "query",
+            "description": "Extra transfertime for the trip assistance booking engine PAS",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "searchForAccessibleTrip",
+            "in": "query",
+            "description": "Return trip advices that are accessible. (might be bookable too)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "destinationTransit",
+            "in": "query",
+            "description": "Return trip advices with transit options to finish travel to the destination",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "destinationWalk",
+            "in": "query",
+            "description": "Return trip advices with walking options to finish travel to the destination (last mile)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "destinationBike",
+            "in": "query",
+            "description": "Return trip advices with biking options to finish travel to the destination (last mile)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "destinationCar",
+            "in": "query",
+            "description": "Return trip advices with car options to finish travel to the destination (last mile)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "destinationName",
+            "in": "query",
+            "description": "A name that is returned as the destination in a trip",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Unique request id to be specified in the places",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Caller-ID",
+            "in": "header",
+            "description": "The caller of the API",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Account details to use when querying trip assistance options",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accessibilityEquipment1",
+            "in": "query",
+            "description": "Accesibility equipment to use when searching for trip assistance options (AVG/PAS)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accessibilityEquipment2",
+            "in": "query",
+            "description": "Secondary accesibility equipment to use when searching for trip assistance options (AVG/PAS)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeHighSpeedTrains",
+            "in": "query",
+            "description": "Exclude high speed trains from results (including those with a required reservation)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "excludeReservationRequired",
+            "in": "query",
+            "description": "Exclude trains for domestic trips that require a reservation (e.g. Thalys)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "passing",
+            "in": "query",
+            "description": "Show intermediate stops that the journey passes but doesn't stop at",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "travelRequestType",
+            "in": "query",
+            "description": "directionsOnly only plans a google directions (walk/bike/car) advice",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DIRECTIONS_ONLY",
+                "DIRECTIONS",
+                "DEFAULT"
+              ]
+            }
+          },
+          {
+            "name": "originEVACode",
+            "in": "query",
+            "description": "EVA code of the station of the trips origin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationEVACode",
+            "in": "query",
+            "description": "EVA code of the station of the trips destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "viaEVACode",
+            "in": "query",
+            "description": "EVA code of the station of the trips via point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shorterChange",
+            "in": "query",
+            "description": "Changes the CHANGE_NOT_POSSIBLE status to CHANGE_COULD_BE_POSSIBLE if the traveler can walk twice as fast",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "fromStation",
+            "in": "query",
+            "description": "Station code of the trips origin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toStation",
+            "in": "query",
+            "description": "Station code of the trips destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "originUicCode",
+            "in": "query",
+            "description": "UIC code of the station of the trips origin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationUicCode",
+            "in": "query",
+            "description": "UIC code of the station of the trips destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "viaUicCode",
+            "in": "query",
+            "description": "UIC code of the station of the trips via point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bikeCarriageRequired",
+            "in": "query",
+            "description": "Whether a bike space is required on the train(s).",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "viaStation",
+            "in": "query",
+            "description": "Station code of the trips via point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "departure",
+            "in": "query",
+            "description": "Whether the provided time is the departure time.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "minimalChangeTime",
+            "in": "query",
+            "description": "The minimum change time between transfers in minutes.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "List of available trips",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TravelAdvice"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/trips/trip": {
+      "get": {
+        "tags": [
+          "Trips"
+        ],
+        "description": "Reconstruct a trip if possible using the given reconCtx (representation of a trip found in a travel advice)",
+        "operationId": "getTrip",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Content type to return (application/json or text/xml)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ctxRecon",
+            "in": "query",
+            "description": "reconstruction context to use as basis for finding trip",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "date to use when reconstructing trip, may be a different date than the trip was originally planned",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "language to return text in (not all texts are translated)",
+            "schema": {
+              "type": "string",
+              "default": "nl"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "description": "name/constant of product customer will use in travel, if omitted defaults to ROS",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "travelClass",
+            "in": "query",
+            "description": "class of travel to use when calculating product prices",
+            "schema": {
+              "type": "string",
+              "default": "2"
+            }
+          },
+          {
+            "name": "discount",
+            "in": "query",
+            "description": "discount of travel to use when calculating product prices",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "travelRequestType",
+            "in": "query",
+            "description": "Type of travelRequest, with or without directions",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "A list of available trips",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TravelAdvice"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "VerstoringReisadvies": {
+        "type": "object",
+        "properties": {
+          "titel": {
+            "type": "string"
+          },
+          "advies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "JourneyDetailLink": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "BTM",
+              "TRAIN_XML",
+              "TRAIN_JSON"
+            ]
+          },
+          "link": {
+            "type": "object",
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "title": {
+                "type": "string"
+              },
+              "uriBuilder": {
+                "type": "object"
+              },
+              "rel": {
+                "type": "string"
+              },
+              "rels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "uri": {
+                "type": "string",
+                "format": "uri"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "externalId": {
+            "type": "string"
+          },
+          "head": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "lead": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MAINTENANCE",
+              "DISRUPTION"
+            ]
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          }
+        }
+      },
+      "BaanvakBeperking": {
+        "type": "object",
+        "properties": {
+          "van": {
+            "$ref": "#/components/schemas/StationCode"
+          },
+          "tot": {
+            "$ref": "#/components/schemas/StationCode"
+          },
+          "via": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StationCode"
+            }
+          },
+          "richting": {
+            "type": "string",
+            "enum": [
+              "HEEN",
+              "HEEN_EN_TERUG"
+            ]
+          }
+        }
+      },
+      "Stop": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "lng": {
+            "type": "number"
+          },
+          "lat": {
+            "type": "number"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "uicCode": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "products": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "routeIdx": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plannedDepartureDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plannedDepartureTimeZoneOffset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actualDepartureDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actualDepartureTimeZoneOffset": {
+            "type": "integer",
+            "format": "int32",
+            "writeOnly": true
+          },
+          "plannedDepartureTrack": {
+            "type": "string"
+          },
+          "actualDepartureTrack": {
+            "type": "string"
+          },
+          "plannedArrivalDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plannedArrivalTimeZoneOffset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actualArrivalDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actualArrivalTimeZoneOffset": {
+            "type": "integer",
+            "format": "int32",
+            "writeOnly": true
+          },
+          "plannedArrivalTrack": {
+            "type": "string"
+          },
+          "actualArrivalTrack": {
+            "type": "string"
+          },
+          "departureDelayInSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "arrivalDelayInSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "passing": {
+            "type": "boolean"
+          },
+          "quayCode": {
+            "type": "string"
+          }
+        }
+      },
+      "DepartureArrivalMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string"
+          },
+          "categoryCode": {
+            "type": "string"
+          },
+          "shortCategoryName": {
+            "type": "string"
+          },
+          "longCategoryName": {
+            "type": "string"
+          },
+          "operatorCode": {
+            "type": "string"
+          },
+          "operatorName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "TRAIN",
+              "BUS",
+              "TRAM",
+              "METRO",
+              "FERRY",
+              "WALK",
+              "BIKE",
+              "CAR",
+              "TAXI",
+              "SUBWAY",
+              "UNKNOWN"
+            ]
+          },
+          "displayName": {
+            "type": "string"
+          }
+        }
+      },
+      "StationCode": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PrijsTraject": {
+        "type": "object",
+        "properties": {
+          "idVerkoopcombinatie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bedrag": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "opstaptarief": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Step": {
+        "type": "object",
+        "properties": {
+          "distanceInMeters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "durationInSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startLocation": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "endLocation": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "instructions": {
+            "type": "string"
+          }
+        }
+      },
+      "TravelAdvice": {
+        "type": "object",
+        "properties": {
+          "trips": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trip"
+            }
+          },
+          "scrollRequestBackwardContext": {
+            "type": "string"
+          },
+          "scrollRequestForwardContext": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "firstDeparture": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "firstArrival": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "firstTrip": {
+            "$ref": "#/components/schemas/Trip"
+          },
+          "lastTripDeparture": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastTripArrival": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastTrip": {
+            "$ref": "#/components/schemas/Trip"
+          }
+        }
+      },
+      "StationRepresentation": {
+        "type": "object",
+        "properties": {
+          "self": {
+            "type": "object",
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "title": {
+                "type": "string"
+              },
+              "uriBuilder": {
+                "type": "object"
+              },
+              "rel": {
+                "type": "string"
+              },
+              "rels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "uri": {
+                "type": "string",
+                "format": "uri"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "params": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "title": {
+                  "type": "string"
+                },
+                "uriBuilder": {
+                  "type": "object"
+                },
+                "rel": {
+                  "type": "string"
+                },
+                "rels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "uri": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "payload": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Station"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "Toeslag": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "bedrag": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RouteStation": {
+        "type": "object"
+      },
+      "Departure": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "plannedDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actualDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plannedTrack": {
+            "type": "string"
+          },
+          "actualTrack": {
+            "type": "string"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          },
+          "trainCategory": {
+            "type": "string"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "journeyDetailRef": {
+            "type": "string"
+          }
+        }
+      },
+      "TripOriginDestination": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "lng": {
+            "type": "number"
+          },
+          "lat": {
+            "type": "number"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "uicCode": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "products": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STATION",
+              "ADDRESS",
+              "POINT_OF_INTEREST"
+            ]
+          },
+          "prognosisType": {
+            "type": "string"
+          },
+          "plannedTimeZoneOffset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plannedDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actualTimeZoneOffset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actualDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plannedTrack": {
+            "type": "string"
+          },
+          "actualTrack": {
+            "type": "string"
+          },
+          "exitSide": {
+            "type": "string",
+            "enum": [
+              "LEFT",
+              "RIGHT",
+              "UNKNOWN"
+            ]
+          },
+          "checkinStatus": {
+            "type": "string",
+            "enum": [
+              "CHECKIN",
+              "CHECKOUT",
+              "OVERCHECK",
+              "DETOUR",
+              "REQUIRED_CHECK_OUT_IN",
+              "NOTHING"
+            ]
+          },
+          "travelAssistanceBookingInfo": {
+            "$ref": "#/components/schemas/ServiceBookingInfo"
+          },
+          "travelAssistanceMeetingPoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Note"
+            }
+          },
+          "quayCode": {
+            "type": "string"
+          },
+          "domestic": {
+            "type": "boolean"
+          },
+          "latestKnownTrack": {
+            "type": "string"
+          }
+        }
+      },
+      "Verstoring": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "baanvakBeperking": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BaanvakBeperking"
+            }
+          },
+          "reden": {
+            "type": "string"
+          },
+          "extraReistijd": {
+            "type": "string"
+          },
+          "leafletUrl": {
+            "type": "string"
+          },
+          "reisadviezen": {
+            "$ref": "#/components/schemas/Reisadviezen"
+          },
+          "geldigheidsLijst": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Geldigheid"
+            }
+          },
+          "verwachting": {
+            "type": "string"
+          },
+          "gevolg": {
+            "type": "string"
+          },
+          "gevolgType": {
+            "type": "string"
+          },
+          "fase": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "integer"
+          },
+          "maatschappij": {
+            "type": "integer"
+          },
+          "alternatiefVervoer": {
+            "type": "string"
+          },
+          "landelijk": {
+            "type": "boolean"
+          },
+          "oorzaak": {
+            "type": "string"
+          },
+          "header": {
+            "type": "string"
+          },
+          "meldtijd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periode": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MELDING_PRIO_1",
+              "MELDING_PRIO_2",
+              "MELDING_PRIO_3",
+              "STORING",
+              "WERKZAAMHEID",
+              "EVENEMENT"
+            ]
+          },
+          "baanvakken": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Baanvak"
+            }
+          },
+          "trajecten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Traject"
+            }
+          },
+          "versie": {
+            "type": "string"
+          },
+          "volgnummer": {
+            "type": "string"
+          },
+          "prioriteit": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Namen": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string"
+          },
+          "kort": {
+            "type": "string"
+          },
+          "middel": {
+            "type": "string"
+          }
+        }
+      },
+      "LatLng": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "format": "double"
+          },
+          "lng": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "Reisrecht": {
+        "type": "object",
+        "properties": {
+          "reistype": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "prijsReisrecht": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrijsReisrecht"
+            }
+          },
+          "routeaanduiding": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "traject": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Traject"
+            }
+          }
+        }
+      },
+      "Reisadviezen": {
+        "type": "object",
+        "properties": {
+          "titel": {
+            "type": "string"
+          },
+          "verstoringreisadvies": {
+            "type": "array",
+            "writeOnly": true,
+            "items": {
+              "$ref": "#/components/schemas/VerstoringReisadvies"
+            }
+          },
+          "verstoringReisAdvies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VerstoringReisadvies"
+            }
+          }
+        }
+      },
+      "Trip": {
+        "type": "object",
+        "properties": {
+          "plannedDurationInMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "transfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CANCELLED",
+              "CHANGE_NOT_POSSIBLE",
+              "CHANGE_COULD_BE_POSSIBLE",
+              "ALTERNATIVE_TRANSPORT",
+              "DISRUPTION",
+              "MAINTENANCE",
+              "REPLACEMENT",
+              "ADDITIONAL",
+              "SPECIAL",
+              "NORMAL"
+            ]
+          },
+          "legs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Leg"
+            }
+          },
+          "overviewPolyLine": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LatLng"
+            }
+          },
+          "checksum": {
+            "type": "string"
+          },
+          "crowdForecast": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ]
+          },
+          "punctuality": {
+            "type": "number",
+            "format": "double"
+          },
+          "ctxRecon": {
+            "type": "string"
+          },
+          "actualDurationInMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idx": {
+            "type": "integer",
+            "format": "int32",
+            "writeOnly": true
+          },
+          "optimal": {
+            "type": "boolean"
+          },
+          "fares": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TripFare"
+            }
+          },
+          "productFare": {
+            "$ref": "#/components/schemas/TripFare"
+          },
+          "shareUrl": {
+            "type": "object",
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "title": {
+                "type": "string"
+              },
+              "uriBuilder": {
+                "type": "object"
+              },
+              "rel": {
+                "type": "string"
+              },
+              "rels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "uri": {
+                "type": "string",
+                "format": "uri"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "NS",
+              "NS_ACCESSIBLE",
+              "NEGENTWEE",
+              "GOOGLE",
+              "PAS"
+            ]
+          },
+          "realtime": {
+            "type": "boolean"
+          },
+          "travelAssistanceInfo": {
+            "$ref": "#/components/schemas/TravelAssistanceInfo"
+          },
+          "firstLeg": {
+            "$ref": "#/components/schemas/Leg"
+          },
+          "lastLeg": {
+            "$ref": "#/components/schemas/Leg"
+          }
+        }
+      },
+      "DepartureBoard": {
+        "type": "object",
+        "properties": {
+          "departures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Departure"
+            }
+          }
+        }
+      },
+      "Arrival": {
+        "type": "object",
+        "properties": {
+          "origin": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "plannedTrack": {
+            "type": "string"
+          },
+          "actualTrack": {
+            "type": "string"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          },
+          "trainCategory": {
+            "type": "string"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "journeyDetailRef": {
+            "type": "string"
+          },
+          "plannedDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actualDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureArrivalMessage"
+            }
+          },
+          "routeStations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteStation"
+            }
+          },
+          "actualOrPlannedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ArrivalBoard": {
+        "type": "object",
+        "properties": {
+          "arrivals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Arrival"
+            }
+          }
+        }
+      },
+      "Leg": {
+        "type": "object",
+        "properties": {
+          "idx": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "travelType": {
+            "type": "string",
+            "enum": [
+              "PUBLIC_TRANSIT",
+              "WALK",
+              "TRANSFER",
+              "BIKE",
+              "CAR",
+              "KISS",
+              "TAXI",
+              "UNKNOWN"
+            ]
+          },
+          "direction": {
+            "type": "string"
+          },
+          "distance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "changePossible": {
+            "type": "boolean"
+          },
+          "alternativeTransport": {
+            "type": "boolean"
+          },
+          "journeyStatus": {
+            "type": "string",
+            "enum": [
+              "PLANNED",
+              "REPLACEMENT",
+              "ADDITIONAL",
+              "SPECIAL"
+            ]
+          },
+          "journeyDetailRef": {
+            "type": "string"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/TripOriginDestination"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/TripOriginDestination"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Note"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            }
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            }
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          },
+          "crowdForecast": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ]
+          },
+          "punctuality": {
+            "type": "number",
+            "format": "double"
+          },
+          "crossPlatformTransfer": {
+            "type": "boolean"
+          },
+          "shorterStock": {
+            "type": "boolean"
+          },
+          "changeCouldBePossible": {
+            "type": "boolean"
+          },
+          "journeyDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JourneyDetailLink"
+            }
+          },
+          "reachable": {
+            "type": "boolean"
+          },
+          "plannedDurationInMinutes": {
+            "type": "integer"
+          },
+          "travelAssistanceDeparture": {
+            "$ref": "#/components/schemas/ServiceBookingInfo"
+          },
+          "travelAssistanceArrival": {
+            "$ref": "#/components/schemas/ServiceBookingInfo"
+          },
+          "overviewPolyLine": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LatLng"
+            }
+          },
+          "firstStop": {
+            "$ref": "#/components/schemas/Stop"
+          },
+          "lastStop": {
+            "$ref": "#/components/schemas/Stop"
+          },
+          "travelOrNeccesaryWalk": {
+            "type": "boolean"
+          },
+          "publicTransit": {
+            "type": "boolean"
+          },
+          "punctualityInternal": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "Station": {
+        "type": "object",
+        "properties": {
+          "synoniemen": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "heeftFaciliteiten": {
+            "type": "boolean"
+          },
+          "heeftVertrektijden": {
+            "type": "boolean"
+          },
+          "heeftReisassistentie": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string"
+          },
+          "namen": {
+            "$ref": "#/components/schemas/Namen"
+          },
+          "stationType": {
+            "type": "string",
+            "enum": [
+              "STOPTREIN_STATION",
+              "KNOOPPUNT_STOPTREIN_STATION",
+              "SNELTREIN_STATION",
+              "KNOOPPUNT_SNELTREIN_STATION",
+              "INTERCITY_STATION",
+              "KNOOPPUNT_INTERCITY_STATION",
+              "MEGA_STATION",
+              "FACULTATIEF_STATION"
+            ]
+          },
+          "land": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "number",
+            "format": "double"
+          },
+          "lng": {
+            "type": "number",
+            "format": "double"
+          },
+          "radius": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "naderenRadius": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "evacode": {
+            "type": "string"
+          },
+          "uiccode": {
+            "type": "string"
+          }
+        }
+      },
+      "TravelAssistanceInfo": {
+        "type": "object"
+      },
+      "TripFare": {
+        "type": "object",
+        "properties": {
+          "priceInCents": {
+            "type": "integer"
+          },
+          "product": {
+            "type": "string",
+            "enum": [
+              "OVCHIPKAART_ENKELE_REIS",
+              "OVCHIPKAART_RETOUR",
+              "TRAJECT_VRIJ_MAAND",
+              "TRAJECT_VRIJ_JAAR",
+              "BUSINESS_CARD_TRAJECT_VRIJ_JAAR",
+              "DAL_VOORDEEL",
+              "ALTIJD_VOORDEEL",
+              "DAL_VRIJ",
+              "WEEKEND_VRIJ",
+              "ALTIJD_VRIJ",
+              "BUSINESSCARD",
+              "BUSINESSCARD_DAL",
+              "STUDENT_WEEK",
+              "STUDENT_WEEKEND",
+              "VDU",
+              "SAMENREISKORTING",
+              "TRAJECT_VRIJ",
+              "RAILRUNNER",
+              "ETICKET_ENKELE_REIS",
+              "ETICKET_RETOUR",
+              "NSI"
+            ]
+          },
+          "travelClass": {
+            "type": "string",
+            "enum": [
+              "FIRST_CLASS",
+              "SECOND_CLASS"
+            ]
+          },
+          "priceInCentsExcludingSupplement": {
+            "type": "integer"
+          },
+          "discountType": {
+            "type": "string",
+            "enum": [
+              "NO_CHARGE",
+              "DISCOUNT_40_PERCENT",
+              "DISCOUNT_20_PERCENT",
+              "FIP_DISCOUNT",
+              "NO_DISCOUNT"
+            ]
+          },
+          "supplementInCents": {
+            "type": "integer"
+          },
+          "link": {
+            "type": "string"
+          },
+          "priceInCentsExcludingSupplementOrPrice": {
+            "type": "integer"
+          }
+        }
+      },
+      "Traject": {
+        "type": "object",
+        "properties": {
+          "vervoerders": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "naamVervoer": {
+            "type": "string"
+          },
+          "cdTariefpuntVan": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cdTariefpuntNaar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "afstand1eKlasse": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "afstand2eKlasse": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "indVolledig2eKlasse": {
+            "type": "boolean"
+          },
+          "prijsTraject": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrijsTraject"
+            }
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "properties": {
+          "totalPriceInCents": {
+            "type": "integer"
+          },
+          "priceDifferenceInCentsBetweenFirstAndSecondClass": {
+            "type": "integer"
+          },
+          "routeDesignation": {
+            "type": "string"
+          },
+          "alternativeRouteDesignations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Price"
+            }
+          },
+          "operatorName": {
+            "type": "string"
+          },
+          "travelDiscount": {
+            "type": "string",
+            "enum": [
+              "NO_DISCOUNT",
+              "DISCOUNT_20",
+              "DISCOUNT_40"
+            ]
+          },
+          "travelClass": {
+            "type": "string",
+            "enum": [
+              "FIRST_CLASS",
+              "SECOND_CLASS"
+            ]
+          },
+          "reisrecht": {
+            "$ref": "#/components/schemas/Reisrecht"
+          },
+          "travelProducts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "OVCHIPKAART_ENKELE_REIS",
+                "OVCHIPKAART_RETOUR",
+                "TRAJECT_VRIJ_MAAND",
+                "TRAJECT_VRIJ_JAAR",
+                "BUSINESS_CARD_TRAJECT_VRIJ_JAAR",
+                "DAL_VOORDEEL",
+                "ALTIJD_VOORDEEL",
+                "DAL_VRIJ",
+                "WEEKEND_VRIJ",
+                "ALTIJD_VRIJ",
+                "BUSINESSCARD",
+                "BUSINESSCARD_DAL",
+                "STUDENT_WEEK",
+                "STUDENT_WEEKEND",
+                "VDU",
+                "SAMENREISKORTING",
+                "TRAJECT_VRIJ",
+                "RAILRUNNER",
+                "ETICKET_ENKELE_REIS",
+                "ETICKET_RETOUR",
+                "NSI"
+              ]
+            }
+          }
+        }
+      },
+      "PrijsReisrecht": {
+        "type": "object",
+        "properties": {
+          "idVerkoopcombinatie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bedrag": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "toeslag": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Toeslag"
+            }
+          }
+        }
+      },
+      "Note": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "noteType": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "ATTRIBUTE",
+              "INFOTEXT",
+              "REALTIME",
+              "TICKET",
+              "HINT"
+            ]
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "routeIdxFrom": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "routeIdxTo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "link": {
+            "type": "object",
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "title": {
+                "type": "string"
+              },
+              "uriBuilder": {
+                "type": "object"
+              },
+              "rel": {
+                "type": "string"
+              },
+              "rels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "uri": {
+                "type": "string",
+                "format": "uri"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          },
+          "alternativeTransport": {
+            "type": "boolean"
+          },
+          "presentationRequired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Baanvak": {
+        "type": "object",
+        "properties": {
+          "stations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Geldigheid": {
+        "type": "object",
+        "properties": {
+          "startDatum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "eindDatum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startTijd": {
+            "type": "string"
+          },
+          "eindTijd": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceBookingInfo": {
+        "type": "object"
+      },
+      "Location": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "lng": {
+            "type": "number"
+          },
+          "lat": {
+            "type": "number"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "uicCode": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "products": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "API key": {
+        "type": "apiKey",
+        "description": "x-api-key",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}
