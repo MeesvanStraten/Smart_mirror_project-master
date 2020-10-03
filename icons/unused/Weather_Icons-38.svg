@@ -1,0 +1,12 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #231f20;
+      }
+    </style>
+  </defs>
+  <title>Weather_Icons</title>
+  <path class="cls-1" d="M19,19.75V7.7c0-2-1.35-3.7-3-3.7s-3,1.66-3,3.7V19.75a5,5,0,1,0,6,0Zm-3,8a4,4,0,0,1-2.22-7.33A.5.5,0,0,0,14,20V7.7c0-1.46.92-2.7,2-2.7s2,1.24,2,2.7V20a.5.5,0,0,0,.22.42A4,4,0,0,1,16,27.75Z"/>
+  <path class="cls-1" d="M17,21.71V8.3A1.19,1.19,0,0,0,16,7a1.19,1.19,0,0,0-1,1.3V21.71a2.5,2.5,0,1,0,2,0Z"/>
+</svg>

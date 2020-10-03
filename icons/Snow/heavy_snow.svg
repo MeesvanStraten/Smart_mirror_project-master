@@ -1,0 +1,25 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #231f20;
+      }
+    </style>
+  </defs>
+  <title>heaveSnow</title>
+  <path class="cls-1" d="M9.83,21h12c2.93,0,5.5-2.8,5.5-6a6,6,0,0,0-5.21-6,5.48,5.48,0,0,0-10.63.26A5.38,5.38,0,0,0,9.83,9c-2.93,0-5.5,2.8-5.5,6S6.9,21,9.83,21Zm0-11a4.45,4.45,0,0,1,1.85.41.5.5,0,0,0,.7-.4,4.48,4.48,0,0,1,8.86-.4.51.51,0,0,0,.5.4h.08c2.58,0,4.5,2.64,4.5,5s-1.92,5-4.5,5h-12c-2.58,0-4.5-2.64-4.5-5S7.26,10,9.83,10Z"/>
+  <circle class="cls-1" cx="12.83" cy="25" r="0.5"/>
+  <circle class="cls-1" cx="10.83" cy="27" r="0.5"/>
+  <circle class="cls-1" cx="8.83" cy="25" r="0.5"/>
+  <circle class="cls-1" cx="6.83" cy="27" r="0.5"/>
+  <circle class="cls-1" cx="17.83" cy="25" r="0.5"/>
+  <circle class="cls-1" cx="15.83" cy="23" r="0.5"/>
+  <circle class="cls-1" cx="20.83" cy="23" r="0.5"/>
+  <circle class="cls-1" cx="14.83" cy="27" r="0.5"/>
+  <circle class="cls-1" cx="12.83" cy="29" r="0.5"/>
+  <circle class="cls-1" cx="8.83" cy="29" r="0.5"/>
+  <circle class="cls-1" cx="19.83" cy="27" r="0.5"/>
+  <circle class="cls-1" cx="22.83" cy="25" r="0.5"/>
+  <circle class="cls-1" cx="16.83" cy="29" r="0.5"/>
+  <circle class="cls-1" cx="10.83" cy="23" r="0.5"/>
+</svg>
