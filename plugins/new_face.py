@@ -27,5 +27,7 @@ while True:
         print("done")
         sys.stdout.flush()
 
-        camera.release()
-        cv2.destroyAllWindows()
+# destroy video capture and all windows
+video_capture.release()
+cv2.destroyAllWindows()
+
