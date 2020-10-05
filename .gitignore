@@ -40,6 +40,10 @@ typings/
 .yarn-integrity
 # dotenv environment variables file
 .env
+#envoirment for python
+env
+#Venv for python
+.venv
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 # next.js build output
