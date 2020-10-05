@@ -1,3 +1,3 @@
-from backend.facerecognition.facerecognition import runIdentificationOnWebcam
+from backend.facerecognition.facerecognition import *
 
-runIdentificationOnWebcam()
+create_new_user()
