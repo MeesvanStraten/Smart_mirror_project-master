@@ -42,6 +42,7 @@ typings/
 .env
 #envoirment for python
 env
+env/
 #Venv for python
 .venv
 # parcel-bundler cache (https://parceljs.org/)
