@@ -1,1 +1,18 @@
 import cv2
+
+faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default")
+
+def run_face_id():
+    video = cv2.VideoCapture(0)
+    while True:
+        check,frame = video.read()
+        faces = faceCascade.detectMultiScale(frame,scaleFactor=1.1,minNeighbors=5)
+
+        for x,y,w,h in faces:
+            frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),3)
+
+            cv2.imshow("Faces detected",frame)
+
+            key = cv2.waitKey(1)
+            if key == ord ('q'):
+                break
