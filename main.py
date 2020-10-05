@@ -1,3 +1,3 @@
-from backend.facerecognition.facerecognition import run_face_id
+from backend.facerecognition.facerecognition import runIdentificationOnWebcam
 
-run_face_id()
+runIdentificationOnWebcam()
