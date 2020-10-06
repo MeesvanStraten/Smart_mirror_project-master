@@ -60,3 +60,22 @@ def compare_faces(img1_path :str, img2_path:str):
     results = face_recognition.compare_faces([img1_encoding], img2_encoding)
 
     return results
+
+def find_user_face(user_to_login_path :str):
+    user_to_login = face_recognition.load_image_file(user_to_login_path)
+    img1 = face_recognition.load_image_file("backend/facerecognition/faces/User.1.1.jpg")
+    img2 = face_recognition.load_image_file("backend/facerecognition/faces/User.2.1.jpg")
+    img3 = face_recognition.load_image_file("backend/facerecognition/faces/User.2.3.jpg")
+
+
+
+
+    user_to_login_encoding = face_recognition.face_encodings(user_to_login)[0]
+    img1_encoding = face_recognition.face_encodings(img1)[0]
+    img2_encoding = face_recognition.face_encodings(img2)[0]
+    img3_encoding = face_recognition.face_encodings(img3)[0]
+
+
+    results = face_recognition.compare_faces([img1_encoding,img2_encoding,img3_encoding], user_to_login_encoding)
+
+    return results
