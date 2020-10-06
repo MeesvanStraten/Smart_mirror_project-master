@@ -1,3 +1,4 @@
+import time
 import cv2
 import face_recognition
 import os
@@ -66,9 +67,9 @@ def compare_faces(img1_path :str, img2_path:str):
 
 
 def find_user_face():
-   # user_to_login = face_recognition.load_image_file(user_to_login_path)
-    user_to_login = capture_user_face()
-
+    capture_user_face()
+    time.sleep(3)
+    user_to_login = face_recognition.load_image_file("backend/facerecognition/TempUser.jpg")
     path = "backend/facerecognition/faces"
     known_faces_paths = []
     known_faces_encodings = []
@@ -81,16 +82,24 @@ def find_user_face():
         known_faces_encodings.append(face_recognition.face_encodings(face_recognition.load_image_file(face_path))[0])
 
     user_to_login_encoding = face_recognition.face_encodings(user_to_login)[0]
+    if not user_to_login_encoding:
+        print("No face detected")
+        os.remove("backend/facerecognition/TempUser.jpg")
+    else:
+        results = face_recognition.compare_faces(known_faces_encodings, user_to_login_encoding)
+        os.remove("backend/facerecognition/TempUser.jpg")
+        return results
 
-    results = face_recognition.compare_faces(known_faces_encodings, user_to_login_encoding)
 
-    return results
+
+
+
 
 def capture_user_face():
-    video = cv2.VideoCapture(0)
+    video = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # captureDevice = camera
 
-    count =0
-    while count >= 10:
+    count = 0
+    while True:
         check, frame = video.read();
         faces = faceCascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
 
@@ -98,7 +107,9 @@ def capture_user_face():
             frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
             count += 1
             crop_img = frame[y:y + h, x:x + w]
+            cv2.imwrite("backend/facerecognition/TempUser" + ".jpg", crop_img)
 
-        return crop_img
+        if count >= 3:
+            break
 
 
