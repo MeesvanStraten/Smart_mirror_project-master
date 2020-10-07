@@ -1,15 +1,13 @@
+import json
 import time
 import cv2
 import face_recognition
 import os
-from PIL import Image
-
-
+from backend.Database import *
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 
-
-def runIdentificationOnWebcam():
+def run_face_id():
     video = cv2.VideoCapture(0)
     while True:
         check, frame = video.read()
@@ -26,33 +24,40 @@ def runIdentificationOnWebcam():
                 cv2.imwrite("face1.jpg", crop_img)
                 break
 
+
 def create_new_user():
 
     video = cv2.VideoCapture(0)
     face_detector = faceCascade
-    # For each person, enter one numeric face id
-    face_id = input('\n enter user id end press <return> ==>  ')
+
+    # Create user in database and retrieve the ID generated to save the image to.
+    name = input('\n enter your name <return> ==>  ')
+    insert_new_user(name)
+    user_result = get_user_by_name(name)
+    face_id = user_result[0].doc_id
     # Initialize individual sampling face count
     count = 0
     while True:
         ret, img = video.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_detector.detectMultiScale(gray, 1.3, 5)
+
         for (x, y, w, h) in faces:
             cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
             count += 1
-            # Save the captured image into the datasets folder
-            gray = cv2.resize(gray[y:y + h, x:x + w], (128,128), interpolation = cv2.INTER_AREA)
-            cv2.imwrite("backend/facerecognition/faces/User." + str(face_id) + '.' +
-                        str(count) + ".jpg", gray)
+            gray = cv2.resize(gray[y:y + h, x:x + w], (128, 128), interpolation=cv2.INTER_AREA)
+            cv2.imwrite("backend/facerecognition/faces/User." + str(face_id) + ".jpg", gray)
             cv2.imshow('image', img)
+
         k = cv2.waitKey(100) & 0xff  # Press 'ESC' for exiting video
         if k == 27:
             break
-        elif count >= 3:
+        elif count >= 1:
             break
+
     video.release()
     cv2.destroyAllWindows()
+
 
 def compare_faces(img1_path :str, img2_path:str):
     img1 = face_recognition.load_image_file(img1_path)
@@ -68,7 +73,7 @@ def compare_faces(img1_path :str, img2_path:str):
 
 
 def find_user_face():
-    capture_user_face()
+    #capture_user_face()
     user_to_login = face_recognition.load_image_file("backend/facerecognition/TempUser.jpg")
     #user_to_login = face_recognition.load_image_file("backend/facerecognition/faces/User.1.1.jpg")
     path = "backend/facerecognition/faces"
