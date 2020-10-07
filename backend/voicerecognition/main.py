@@ -6,6 +6,7 @@ import warnings
 import random
 import wikipedia
 import time
+import webbrowser
 
 warnings.filterwarnings('ignore')
 
@@ -44,7 +45,7 @@ def assistantResponse(text):
 
 # A function to check for wake word(s)
 def wakeWord(text):
-    WAKE_WORDS = ['hallo', 'oke computer']
+    WAKE_WORDS = ['hi spiegel', 'hey spiegel', 'hallo spiegel', 'hay spiegel', 'oké spiegel']
     text = text.lower()  # Convert the text to all lower case words
     # Check to see if the users command/text contains a wake word
     for phrase in WAKE_WORDS:
@@ -56,7 +57,7 @@ def wakeWord(text):
 # Function to return a random greeting response
 def greeting(text):
     # Greeting Inputs
-    GREETING_INPUTS = ['hi', 'hey', 'hola', 'wassup', 'hallo']
+    GREETING_INPUTS = ['hi', 'hey', 'hallo', 'hay', 'ok', 'oké']
     # Greeting Response back to the user
     GREETING_RESPONSES = ['howdy', 'Wie bende gij nou', 'hallo', 'Heey jij']
     # If the users input is a greeting, then return random response
@@ -64,16 +65,14 @@ def greeting(text):
         if word.lower() in GREETING_INPUTS:
             return random.choice(GREETING_RESPONSES) + '.'
     # If no greeting was detected then return an empty string
+
     return ''
 
-# Function to get a person first and last name
-def getPerson(text):
- wordList = text.split()# Split the text into a list of words
- for i in range(0, len(wordList)):
-   if i + 3 <= len(wordList) - 1 and wordList[i].lower() == 'who' and wordList[i + 1].lower() == 'is':
-            return wordList[i + 2] + ' ' + wordList[i + 3]
+def openBrowser(text):
+    webbrowser.open("https://www.google.com/"+ text)
 
-timeout = 30
+
+timeout = 300
 
 while True:
     # Record the audio
@@ -87,9 +86,15 @@ while True:
         timeout_start = time.time()
 
         while time.time() < timeout_start + timeout:
+            text = ''
             text = recordAudio()
+            text = text.lower()
             # Check for greetings by the user
             # Check to see if the user said date
+
+            if ('open' in text):
+                openBrowser(text)
+
             if ('tijd' in text):
                 now = datetime.datetime.now()
                 meridiem = ''
