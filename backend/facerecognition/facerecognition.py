@@ -68,27 +68,35 @@ def compare_faces(img1_path :str, img2_path:str):
 
 def find_user_face():
     capture_user_face()
-    time.sleep(3)
     user_to_login = face_recognition.load_image_file("backend/facerecognition/TempUser.jpg")
     path = "backend/facerecognition/faces"
     known_faces_paths = []
     known_faces_encodings = []
 
+    if not user_to_login.any():
+        print("user_to_login img is not loaded correctly..")
+
     for subdir, dirs, files in os.walk(path):
         for file in files:
             known_faces_paths.append(os.path.join(subdir, file))
 
+#list with known faces is being encoded fine so problem is with the user_to_login encoding
     for face_path in known_faces_paths:
         known_faces_encodings.append(face_recognition.face_encodings(face_recognition.load_image_file(face_path))[0])
 
-    user_to_login_encoding = face_recognition.face_encodings(user_to_login)[0]
-    if not user_to_login_encoding:
-        print("No face detected")
+#mistake is made here probable, maybe the [0] below???
+    if not face_recognition.face_encodings(user_to_login[0]):
+        print("Not possible to encode face from img")
         os.remove("backend/facerecognition/TempUser.jpg")
     else:
-        results = face_recognition.compare_faces(known_faces_encodings, user_to_login_encoding)
-        os.remove("backend/facerecognition/TempUser.jpg")
-        return results
+        user_to_login_encoding = face_recognition.face_encodings(user_to_login)[0]
+        if not user_to_login_encoding.any():
+            print("No face detected")
+            os.remove("backend/facerecognition/TempUser.jpg")
+        else:
+            results = face_recognition.compare_faces(known_faces_encodings, user_to_login_encoding)
+            os.remove("backend/facerecognition/TempUser.jpg")
+            return results
 
 
 

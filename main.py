@@ -5,5 +5,5 @@ from backend.facerecognition.facerecognition import *
 #print(find_user_face("backend/facerecognition/faces/User.1.2.jpg"))
 #print(find_user_face())
 
-print(find_user_face())
 #capture_user_face()
+print(find_user_face())
