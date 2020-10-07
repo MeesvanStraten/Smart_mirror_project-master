@@ -2,6 +2,7 @@ import time
 import cv2
 import face_recognition
 import os
+from PIL import Image
 
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -35,15 +36,15 @@ def create_new_user():
     count = 0
     while True:
         ret, img = video.read()
-        #img = cv2.flip(img, -1)  # flip video image vertically
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_detector.detectMultiScale(gray, 1.3, 5)
         for (x, y, w, h) in faces:
             cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
             count += 1
             # Save the captured image into the datasets folder
+            gray = cv2.resize(gray[y:y + h, x:x + w], (128,128), interpolation = cv2.INTER_AREA)
             cv2.imwrite("backend/facerecognition/faces/User." + str(face_id) + '.' +
-                        str(count) + ".jpg", gray[y:y + h, x:x + w])
+                        str(count) + ".jpg", gray)
             cv2.imshow('image', img)
         k = cv2.waitKey(100) & 0xff  # Press 'ESC' for exiting video
         if k == 27:
@@ -116,6 +117,8 @@ def capture_user_face():
             frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
             count += 1
             crop_img = frame[y:y + h, x:x + w]
+            crop_img = cv2.resize(crop_img, (128,128), interpolation = cv2.INTER_AREA)
+
             cv2.imwrite("backend/facerecognition/TempUser" + ".jpg", crop_img)
 
         if count >= 3:
