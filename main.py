@@ -7,4 +7,5 @@ from backend.facerecognition.facerecognition import *
 
 #create_new_user()
 #insert_new_user('Mees', '1')
-create_new_user();
+#create_new_user();
+print(find_user_face())

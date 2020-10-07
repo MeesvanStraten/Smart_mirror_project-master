@@ -73,9 +73,8 @@ def compare_faces(img1_path :str, img2_path:str):
 
 
 def find_user_face():
-    #capture_user_face()
+    capture_user_face()
     user_to_login = face_recognition.load_image_file("backend/facerecognition/TempUser.jpg")
-    #user_to_login = face_recognition.load_image_file("backend/facerecognition/faces/User.1.1.jpg")
     path = "backend/facerecognition/faces"
     known_faces_paths = []
     known_faces_encodings = []
@@ -94,15 +93,15 @@ def find_user_face():
 #mistake is made here probable, maybe the [0] below???
     if not face_recognition.face_encodings(user_to_login):
         print("Not possible to encode face from img")
-        #os.remove("backend/facerecognition/TempUser.jpg")
+        os.remove("backend/facerecognition/TempUser.jpg")
     else:
         user_to_login_encoding = face_recognition.face_encodings(user_to_login)[0]
         if not user_to_login_encoding.any():
             print("No face detected")
-            #os.remove("backend/facerecognition/TempUser.jpg")
+            os.remove("backend/facerecognition/TempUser.jpg")
         else:
             results = face_recognition.compare_faces(known_faces_encodings, user_to_login_encoding)
-            #os.remove("backend/facerecognition/TempUser.jpg")
+            os.remove("backend/facerecognition/TempUser.jpg")
             return results
 
 
