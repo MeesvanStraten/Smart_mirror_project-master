@@ -11,7 +11,7 @@ faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontal
 def runIdentificationOnWebcam():
     video = cv2.VideoCapture(0)
     while True:
-        check, frame = video.read();
+        check, frame = video.read()
         faces = faceCascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
 
         for x, y, w, h in faces:
@@ -67,8 +67,9 @@ def compare_faces(img1_path :str, img2_path:str):
 
 
 def find_user_face():
-    capture_user_face()
+    # capture_user_face()
     user_to_login = face_recognition.load_image_file("backend/facerecognition/TempUser.jpg")
+    # user_to_login = face_recognition.load_image_file("backend/facerecognition/faces/User.1.1.jpg")
     path = "backend/facerecognition/faces"
     known_faces_paths = []
     known_faces_encodings = []
@@ -85,7 +86,7 @@ def find_user_face():
         known_faces_encodings.append(face_recognition.face_encodings(face_recognition.load_image_file(face_path))[0])
 
 #mistake is made here probable, maybe the [0] below???
-    if not face_recognition.face_encodings(user_to_login[0]):
+    if not face_recognition.face_encodings(user_to_login):
         print("Not possible to encode face from img")
         os.remove("backend/facerecognition/TempUser.jpg")
     else:
@@ -108,7 +109,7 @@ def capture_user_face():
 
     count = 0
     while True:
-        check, frame = video.read();
+        check, frame = video.read()
         faces = faceCascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
 
         for x, y, w, h in faces:
