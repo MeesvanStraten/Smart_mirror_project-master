@@ -3,31 +3,8 @@
 ## Library installation
 - Python 3.7 or higher
 - OpenCV
-- Face_Recognition + requirements
-- SpeechRecognition + requirements
-- NPM
+Make sure PIP is up to date. After that use 'Pip install -r requirements.txt' This install all dependencies from the requirements.txt
 
-### Face_recognition requirements
-
-If you're on a Mac, you can simply execute `pip3 install face_recognition` and it will install the required dependencies, including dlib. If you are not on a Mac, you might have to install dlib first: Check out the documentation linked below.
-
-OpenCV also needs to be installed using `pip3 install opencv-python`.
-
-
-Link for more support & the official documentation:
-https://github.com/ageitgey/face_recognition 
-
-### Speechrecognition requirements
-Requirements
-- PyAudio 
-- PocketSphinx 
-- Google API Client Library for Python 
-- FLAC encoder
-
-After all the requirements have beeen met use <code>pip install SpeechRecognition</code> to install the required library.
-
-Link for more support & the official documentation:
-https://github.com/Uberi/speech_recognition
 
 ## ElectronJS using npm
 After cloning this git you can go to the correct folder using CMD and use the <code>npm i</code> command to install all the required node packages.
