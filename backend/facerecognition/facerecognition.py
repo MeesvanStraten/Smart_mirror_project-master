@@ -4,25 +4,8 @@ import cv2
 import face_recognition
 import os
 from backend.Database import *
+
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-
-def run_face_id():
-    video = cv2.VideoCapture(0)
-    while True:
-        check, frame = video.read()
-        faces = faceCascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
-
-        for x, y, w, h in faces:
-            frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
-
-            cv2.imshow("Faces detected", frame)
-
-            key = cv2.waitKey(1)
-            if key == ord('q'):
-                crop_img = frame[y:y + h, x:x + w]
-                cv2.imwrite("face1.jpg", crop_img)
-                break
 
 
 def create_new_user():
@@ -73,9 +56,14 @@ def compare_faces(img1_path :str, img2_path:str):
 
 
 def find_user_face():
+    #calls function to create a temp image of user
     capture_user_face()
+
+    #image created by capture_user_face(), gets deleted after the encoding for safety
     user_to_login = face_recognition.load_image_file("backend/facerecognition/TempUser.jpg")
+
     path = "backend/facerecognition/faces"
+
     known_faces_paths = []
     known_faces_encodings = []
 
@@ -86,11 +74,11 @@ def find_user_face():
         for file in files:
             known_faces_paths.append(os.path.join(subdir, file))
 
-#list with known faces is being encoded fine so problem is with the user_to_login encoding
+    #encodes each face in the from know_faces array to encoding array
     for face_path in known_faces_paths:
         known_faces_encodings.append(face_recognition.face_encodings(face_recognition.load_image_file(face_path))[0])
 
-#mistake is made here probable, maybe the [0] below???
+    #encodes user_to_login and removes after encoding
     if not face_recognition.face_encodings(user_to_login):
         print("Not possible to encode face from img")
         os.remove("backend/facerecognition/TempUser.jpg")
@@ -102,15 +90,14 @@ def find_user_face():
         else:
             results = face_recognition.compare_faces(known_faces_encodings, user_to_login_encoding)
             os.remove("backend/facerecognition/TempUser.jpg")
+
+            #return array of booleans True = user_to_login is the same as person as N in array
             return results
 
 
-
-
-
-
+#This function captures a temp image of the user in front of the camera which is used in the find_user_face() function
 def capture_user_face():
-    video = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # captureDevice = camera
+    video = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     count = 0
     while True:
@@ -124,8 +111,6 @@ def capture_user_face():
             crop_img = cv2.resize(crop_img, (128,128), interpolation = cv2.INTER_AREA)
 
             cv2.imwrite("backend/facerecognition/TempUser" + ".jpg", crop_img)
-
+        #3 frames, overwrites each time
         if count >= 3:
-            break
-
-
+            break;
