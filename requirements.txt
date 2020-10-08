@@ -56,6 +56,9 @@ soupsieve==2.0.1
 SpeechRecognition==3.8.1
 tinydb==4.2.0
 toml==0.10.1
+
+wikipedia~=1.4.0
+gTTS~=2.1.1
 tzlocal==2.1
 uritemplate==3.0.1
 urllib3==1.25.10
