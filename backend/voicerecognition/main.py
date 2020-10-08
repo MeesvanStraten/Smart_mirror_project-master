@@ -4,7 +4,6 @@ from gtts import gTTS
 import datetime
 import warnings
 import random
-import wikipedia
 import time
 import webbrowser
 
@@ -54,6 +53,24 @@ def wakeWord(text):
     # If the wake word was not found return false
     return False
 
+##TODO FIX
+def tellTheTime(text):
+    WAKE_WORDS = ['hoe laat is het', 'wat is de tijd', 'de tijd']
+    for phrase in WAKE_WORDS:
+        if phrase in text:
+            now = datetime.datetime.now()
+            if now.hour >= 12:
+                hour = now.hour - 12
+            else:
+                hour = now.hour
+                # Convert minute into a proper string
+            if now.minute < 10:
+                minute = '0' + str(now.minute)
+            else:
+                minute = str(now.minute)
+            response = 'Het is ' + str(hour) + ':' + minute + '.'
+            return response
+
 # Function to return a random greeting response
 def greeting(text):
     # Greeting Inputs
@@ -65,7 +82,6 @@ def greeting(text):
         if word.lower() in GREETING_INPUTS:
             return random.choice(GREETING_RESPONSES) + '.'
     # If no greeting was detected then return an empty string
-
     return ''
 
 def openBrowser(text):
@@ -89,27 +105,14 @@ while True:
             text = ''
             text = recordAudio()
             text = text.lower()
+            response = ''
             # Check for greetings by the user
             # Check to see if the user said date
 
             if ('open' in text):
                 openBrowser(text)
 
-            if ('tijd' in text):
-                now = datetime.datetime.now()
-                meridiem = ''
-                if now.hour >= 12:
-                    meridiem = 'p.m'  # Post Meridiem (PM)
-                    hour = now.hour - 12
-                else:
-                    meridiem = 'a.m'  # Ante Meridiem (AM)
-                    hour = now.hour
-                    # Convert minute into a proper string
-                if now.minute < 10:
-                    minute = '0' + str(now.minute)
-                else:
-                    minute = str(now.minute)
-                response = response + ' ' + 'Het is ' + str(hour) + ':' + minute + '.'
+            if (tellTheTime(text)):
                 assistantResponse(response)
                 timeout = timeout + timeout
         print("not listing")
