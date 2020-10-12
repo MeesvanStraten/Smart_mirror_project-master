@@ -1,7 +1,6 @@
 import speech_recognition as sr
 import os
 from gtts import gTTS
-import datetime
 import warnings
 import random
 import time
@@ -11,7 +10,7 @@ warnings.filterwarnings('ignore')
 
 
 # Record audio and return it as a string
-def recordAudio():
+def record_audio():
     # Record the audio
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -31,7 +30,7 @@ def recordAudio():
 
 
 # Function to get the virtual assistant response
-def assistantResponse(text):
+def assistant_response(text):
     print(text)
     # Convert the text to speech
     myobj = gTTS(text=text, lang='nl', slow=False)
@@ -43,7 +42,7 @@ def assistantResponse(text):
 
 
 # A function to check for wake word(s)
-def wakeWord(text):
+def wake_word(text):
     WAKE_WORDS = ['hi spiegel', 'hey spiegel', 'hallo spiegel', 'hay spiegel', 'oké spiegel']
     text = text.lower()  # Convert the text to all lower case words
     # Check to see if the users command/text contains a wake word
@@ -52,24 +51,6 @@ def wakeWord(text):
             return True
     # If the wake word was not found return false
     return False
-
-##TODO FIX
-def tellTheTime(text):
-    WAKE_WORDS = ['hoe laat is het', 'wat is de tijd', 'de tijd']
-    for phrase in WAKE_WORDS:
-        if phrase in text:
-            now = datetime.datetime.now()
-            if now.hour >= 12:
-                hour = now.hour - 12
-            else:
-                hour = now.hour
-                # Convert minute into a proper string
-            if now.minute < 10:
-                minute = '0' + str(now.minute)
-            else:
-                minute = str(now.minute)
-            response = 'Het is ' + str(hour) + ':' + minute + '.'
-            return response
 
 # Function to return a random greeting response
 def greeting(text):
@@ -90,29 +71,29 @@ def openBrowser(text):
 
 timeout = 300
 
-while True:
-    # Record the audio
-    text = recordAudio()
-    response = ''  # Empty response string
-    # Checking for the wake word/phrase
-    if (wakeWord(text) == True):
-        response = response + greeting(text)
-        assistantResponse(response)
-        # sets the 300 second timer
-        timeout_start = time.time()
+def assistant_listen():
+    while True:
+        # Record the audio
+        text = record_audio()
+        response = ''  # Empty response string
+        # Checking for the wake word/phrase
+        if (wake_word(text) == True):
+            response = response + greeting(text)
+            assistant_response(response)
+            # sets the 300 second timer
+            timeout_start = time.time()
 
-        while time.time() < timeout_start + timeout:
-            text = ''
-            text = recordAudio()
-            text = text.lower()
-            response = ''
-            # Check for greetings by the user
-            # Check to see if the user said date
+            while time.time() < timeout_start + timeout:
+                text = ''
+                text = record_audio()
+                text = text.lower()
+                response = ''
+                # Check for greetings by the user
+                # Check to see if the user said date
 
-            if ('open' in text):
-                openBrowser(text)
+                if ('open' in text):
+                    openBrowser(text)
 
-            if (tellTheTime(text)):
-                assistantResponse(response)
-                timeout = timeout + timeout
-        print("not listing")
+
+
+            print("not listing")
