@@ -6,8 +6,7 @@ import warnings
 import random
 import time
 import webbrowser
-
-warnings.filterwarnings('ignore')
+from backend.voicerecognition.commandlibrary import *
 
 
 # Record audio and return it as a string
@@ -43,34 +42,7 @@ def assistant_response(text):
 
 
 def load():
-    command_listen_to_name()
-
-def command_listen_to_name():
-    assisant_response = gTTS(text="wat is jouw name?", lang='nl', slow=False)
-    assisant_response.save('assistant_response.mp3')
-    os.system('start assistant_response.mp3')
-
-    recorded_name = record_audio()
-    recorded_name = gTTS(text=recorded_name, lang='nl', slow=False)
-    recorded_name.save('assistant_response.mp3')
-    os.system('start assistant_response.mp3')
-
-    confirmation = gTTS(text="klopt deze naam?", lang='nl', slow=False)
-    confirmation.save('assistant_response.mp3')
-    os.system('start assistant_response.mp3')
-
-    confirmation = record_audio()
-
-    CONFIRMATION_WORDS = ['ja', 'dat klopt', 'dat is mijn naam']
-    for phrase in CONFIRMATION_WORDS:
-        if phrase in confirmation:
-            return create_new_user(recorded_name.text)
-
-    UNCONFIRMATION_WORDS = ['nee', 'dat is niet', 'dat is niet mijn naam', 'dat klopt niet']
-    for phrase in UNCONFIRMATION_WORDS:
-        if phrase in confirmation:
-             return load()
-
+    command_listen_to_name(True, True, )
 
 
 # A function to check for wake word(s)
@@ -90,7 +62,7 @@ def greeting(text):
     # Greeting Inputs
     GREETING_INPUTS = ['hi', 'hey', 'hallo', 'hay', 'ok', 'oké']
     # Greeting Response back to the user
-    GREETING_RESPONSES = ['howdy', 'Wie bende gij nou', 'hallo', 'Heey jij']
+    GREETING_RESPONSES = ['howdy', 'hallo', 'hi', 'Heey jij']
     # If the users input is a greeting, then return random response
     for word in text.split():
         if word.lower() in GREETING_INPUTS:
@@ -99,12 +71,44 @@ def greeting(text):
     return ''
 
 
-def command_create_new_user(text):
-    CREATE_USER_INPUTS = ['maak gebruiker']
-    text = text.lower()
-    for phrase in CREATE_USER_INPUTS:
-        if phrase in text:
-            command_listen_to_name()
+def assistant_listen_response(confirm_user_input: bool, can_user_record: bool, response: str):
+    user_input = ''
+    if can_user_record:
+        user_input = record_audio()
+    recorded_name = gTTS(text=response, lang='nl', slow=False)
+    recorded_name.save('assistant_response.mp3')
+    if confirm_user_input:
+        os.system('start assistant_response.mp3')
+        if can_user_record:
+            return user_input
+    return ''
+
+
+def command_listen_to_name(confirm_user_input: bool, can_user_record: bool):
+    user_sentence = ""
+
+    user_sentence = assistant_listen_response(confirm_user_input, can_user_record, response_name_confirmation[0])
+    if user_sentence == '':
+        user_sentence = assistant_listen_response(confirm_user_input, can_user_record, response_name_confirmation[0])
+
+    user_confirmation = assistant_listen_response(confirm_user_input, can_user_record, "klopt dit?")
+    for command in command_confirmation:
+        if command in user_confirmation:
+            return create_new_user(user_sentence)
+
+    for request in request_change_confirmation:
+        if request in user_sentence:
+            return load()
+
+
+def voice_command(user_sentence: str, commands: list):
+    for command in commands:
+        if user_sentence in command:
+            print("command found")
+            return True
+        else:
+            print("command not found")
+            return False
 
 
 def openBrowser(text):
@@ -117,26 +121,24 @@ timeout = 300
 def assistant_listen():
     while True:
         # Record the audio
-        text = record_audio()
+        user_sentence = record_audio()
         response = ''  # Empty response string
         # Checking for the wake word/phrase
-        if (wake_word(text) == True):
-            response = response + greeting(text)
+        if (wake_word(user_sentence) == True):
+            response = response + greeting(user_sentence)
             assistant_response(response)
             # sets the 300 second timer
             timeout_start = time.time()
 
             while time.time() < timeout_start + timeout:
-                text = ''
-                text = record_audio()
-                text = text.lower()
-                response = ''
-                # Check for greetings by the user
-                # Check to see if the user said date
+                user_sentence = ''
+                user_sentence = record_audio()
+                user_sentence = user_sentence.lower()
 
-                # if ('open' in text):
-                #     openBrowser(text)
-
-                command_create_new_user(text)
+                if voice_command(user_sentence=user_sentence, commands=command_make_new_user):
+                    command_listen_to_name(True, True)
 
             print("not listing")
+
+
+response = ["doet die het", "werkt het"]
