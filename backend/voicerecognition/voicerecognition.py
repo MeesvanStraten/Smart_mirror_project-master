@@ -1,4 +1,5 @@
 import speech_recognition as sr
+from backend.facerecognition.facerecognition import *
 import os
 from gtts import gTTS
 import warnings
@@ -41,6 +42,37 @@ def assistant_response(text):
     os.system('start assistant_response.mp3')
 
 
+def load():
+    command_listen_to_name()
+
+def command_listen_to_name():
+    assisant_response = gTTS(text="wat is jouw name?", lang='nl', slow=False)
+    assisant_response.save('assistant_response.mp3')
+    os.system('start assistant_response.mp3')
+
+    recorded_name = record_audio()
+    recorded_name = gTTS(text=recorded_name, lang='nl', slow=False)
+    recorded_name.save('assistant_response.mp3')
+    os.system('start assistant_response.mp3')
+
+    confirmation = gTTS(text="klopt deze naam?", lang='nl', slow=False)
+    confirmation.save('assistant_response.mp3')
+    os.system('start assistant_response.mp3')
+
+    confirmation = record_audio()
+
+    CONFIRMATION_WORDS = ['ja', 'dat klopt', 'dat is mijn naam']
+    for phrase in CONFIRMATION_WORDS:
+        if phrase in confirmation:
+            return create_new_user(recorded_name.text)
+
+    UNCONFIRMATION_WORDS = ['nee', 'dat is niet', 'dat is niet mijn naam', 'dat klopt niet']
+    for phrase in UNCONFIRMATION_WORDS:
+        if phrase in confirmation:
+             return load()
+
+
+
 # A function to check for wake word(s)
 def wake_word(text):
     WAKE_WORDS = ['hi spiegel', 'hey spiegel', 'hallo spiegel', 'hay spiegel', 'oké spiegel']
@@ -51,6 +83,7 @@ def wake_word(text):
             return True
     # If the wake word was not found return false
     return False
+
 
 # Function to return a random greeting response
 def greeting(text):
@@ -65,11 +98,21 @@ def greeting(text):
     # If no greeting was detected then return an empty string
     return ''
 
+
+def command_create_new_user(text):
+    CREATE_USER_INPUTS = ['maak gebruiker']
+    text = text.lower()
+    for phrase in CREATE_USER_INPUTS:
+        if phrase in text:
+            command_listen_to_name()
+
+
 def openBrowser(text):
-    webbrowser.open("https://www.google.com/"+ text)
+    webbrowser.open("https://www.google.com/" + text)
 
 
 timeout = 300
+
 
 def assistant_listen():
     while True:
@@ -91,9 +134,9 @@ def assistant_listen():
                 # Check for greetings by the user
                 # Check to see if the user said date
 
-                if ('open' in text):
-                    openBrowser(text)
+                # if ('open' in text):
+                #     openBrowser(text)
 
-
+                command_create_new_user(text)
 
             print("not listing")
