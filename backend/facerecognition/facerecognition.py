@@ -4,17 +4,18 @@ import cv2
 import face_recognition
 import os
 from backend.Database import *
+from backend.voicerecognition.voicerecognition import *
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 
-def create_new_user():
+def create_new_user(name: str):
 
     video = cv2.VideoCapture(0)
     face_detector = faceCascade
 
     # Create user in database and retrieve the ID generated to save the image to.
-    name = input('\n enter your name <return> ==>  ')
+    # name = command_listen_to_name()
     insert_new_user(name)
     user_result = get_user_by_name(name)
     face_id = user_result[0].doc_id
