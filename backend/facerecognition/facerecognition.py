@@ -8,8 +8,38 @@ from backend.voicerecognition.voicerecognition import *
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-def poc_find_person():
-    print("yay")
+def drawbox(img,boundingbox):
+    x, y, w, h = int(boundingbox[0]), int(boundingbox[1]), int(boundingbox[2]), int(boundingbox[3])
+    cv2.rectangle(img, (x, y), ((x + w), (y + h)), (255, 0, 255), 3, 1)
+    cv2.putText(img, "Tracking", (85, 75), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 255, 0), 2)
+
+def poc_manual_tracking():
+    capture = cv2.VideoCapture(4)
+    # tracker = cv2.TrackerMOSSE_create()
+    tracker = cv2.TrackerCSRT_create()
+    success, img = capture.read()
+    boundingbox = cv2.selectROI("Tracking", img, False)
+    tracker.init(img, boundingbox)
+
+
+    while True:
+        timer = cv2.getTickCount()
+        success, img = capture.read()
+
+        success, boundingbox = tracker.update(img)
+
+        if success:
+            drawbox(img, boundingbox)
+        else:
+            cv2.putText(img, "Lost object", (85, 75), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 255), 2)
+
+        fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
+        cv2.putText(img, str(int(fps)), (85, 50), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0,), 2)
+        cv2.imshow("Tracking", img)
+
+        if cv2.waitKey(1) & 0xff == ord('q'):
+            break
+
 
 
 def create_new_user(name: str):

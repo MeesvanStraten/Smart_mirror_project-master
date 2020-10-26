@@ -1,4 +1,4 @@
 from backend.voicerecognition.voicerecognition import *
 
 #assistant_listen()
-poc_find_person()
+poc_manual_tracking()
