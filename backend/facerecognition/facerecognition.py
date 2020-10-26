@@ -8,6 +8,9 @@ from backend.voicerecognition.voicerecognition import *
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
+def poc_find_person():
+    print("yay")
+
 
 def create_new_user(name: str):
 
